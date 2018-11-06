@@ -7,7 +7,7 @@ function Blockchain() {         //Blockchain data structure
     this.currentNodeUrl = currentNodeUrl;
     this.networkNodes = [];
 
-    this.createNewBlock(100, );
+    this.createNewBlock(100, '0', '0');
 };
 
 Blockchain.prototype.createNewBlock = function(nonce, previousBlockHash, hash){
@@ -36,3 +36,13 @@ Blockchain.prototype.hashBlock = function (previousBlockHash, CurrentBlockData, 
     return hash;
 };
 
+Blockchain.prototype.proofOfWork = function(previousBlockHash, currentBlockData) {
+    let nonce = 0;
+    let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+    while(hash.substring(0,4) !== '0000') {
+        nonce++;
+        hash = this.hashblock(previousBlockHash, currentBlockData, nonce);
+    }
+
+    return nonce;
+};
