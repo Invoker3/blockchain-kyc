@@ -65,8 +65,7 @@ app.post('/generate-keypair', function (req, res) {
       PromiseA.all([
         keypair(keyName)
       ]).then(function (keys) {
-        console.log('Generated %d keypairs', keys.length);
-        res.json({note: 'Done!'});
+        res.json({note: 'Public/Private keypair generated for ' + keyName});
       });
 })
 
