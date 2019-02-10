@@ -7,6 +7,11 @@ const port = process.argv[2];
 const rp = require('request-promise');
 const crypto = require('crypto');
 const fs = require('fs');
+const PromiseA = require('bluebird').Promise;
+const fsPromise = PromiseA.promisifyAll(require('fs'));
+const path = require('path');
+const ursa = require('ursa');
+const mkdirpAsync = PromiseA.promisify(require('mkdirp'));
 
 const nodeAddress = uuid().split('-').join('');
 
@@ -38,6 +43,32 @@ app.post('/transaction', function (req, res) {
     res.json({ note: `Transaction will be added in block ${blockIndex}.` });
 })
 
+app.post('/generate-keypair', function (req, res) {
+    const keyName = req.body.keyName;
+    function keypair(pathname) {
+        var key = ursa.generatePrivateKey(1024, 65537);
+        var privpem = key.toPrivatePem();
+        var pubpem = key.toPublicPem();
+        var privkey = path.join('keys', pathname, pathname + '.privkey.pem');
+        var pubkey = path.join('keys', pathname, pathname + '.pubkey.pem');
+      
+        return mkdirpAsync('keys/' + pathname).then(function () {
+          return PromiseA.all([
+            fsPromise.writeFileAsync(privkey, privpem, 'ascii')
+          , fsPromise.writeFileAsync(pubkey, pubpem, 'ascii')
+          ]);
+        }).then(function () {
+          return key;
+        });
+      }
+      
+      PromiseA.all([
+        keypair(keyName)
+      ]).then(function (keys) {
+        console.log('Generated %d keypairs', keys.length);
+        res.json({note: 'Done!'});
+      });
+})
 
 app.post('/input-and-encrypt', function (req, res) {
     const name = req.body.name;
