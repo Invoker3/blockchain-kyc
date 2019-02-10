@@ -7,6 +7,11 @@ const port = process.argv[2];
 const rp = require('request-promise');
 const crypto = require('crypto');
 const fs = require('fs');
+const PromiseA = require('bluebird').Promise;
+const fsPromise = PromiseA.promisifyAll(require('fs'));
+const path = require('path');
+const ursa = require('ursa');
+const mkdirpAsync = PromiseA.promisify(require('mkdirp'));
 
 const nodeAddress = uuid().split('-').join('');
 
@@ -37,7 +42,6 @@ app.post('/transaction', function (req, res) {
     const blockIndex = bitcoin.addTransactionToPendingTransactions(newTransaction);
     res.json({ note: `Transaction will be added in block ${blockIndex}.` });
 })
-
 
 app.post('/input-and-encrypt', function (req, res) {
     const name = req.body.name;
