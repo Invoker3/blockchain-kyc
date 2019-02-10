@@ -26,7 +26,7 @@
 						<select class="form-control" ng-model="searchType">
 							<option value="block">Block Hash</option>
 							<option value="transaction">Transaction ID</option>
-							<option value="address">Address</option>
+							<!-- <option value="address">Address</option> -->
 						</select>
 					</div>
 					<button
@@ -80,17 +80,17 @@
 				<table class="table table-striped" ng-if="transaction">
 					<tbody>
 						<tr>	
-							<td class="bold">Sender</td>
-							<td>{{ transaction.sender }}</td>
+							<td class="bold">Encrypted Data</td>
+							<td>{{ transaction.owner }}</td>
 						</tr>
-						<tr>	
+						<!-- <tr>	
 							<td class="bold">Recipient</td>
 							<td>{{ transaction.recipient }}</td>
 						</tr>
 						<tr>	
 							<td class="bold">Amount</td>
 							<td>{{ transaction.amount }}</td>
-						</tr>
+						</tr> -->
 					</tbody>
 				</table>
 				<!-- end 'display transaction' table -->
