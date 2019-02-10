@@ -189,7 +189,7 @@ app.get('/mine', function (req, res) {
                 uri: bitcoin.currentNodeUrl + '/transaction/broadcast',
                 method: 'POST',
                 body: {
-                    amount: 12.5,
+                    amount: 20.5, //changing mining reward to 20.5
                     sender: "00",
                     recipient: nodeAddress
                 },
