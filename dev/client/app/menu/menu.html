@@ -1,0 +1,16 @@
+<md-sidenav md-is-locked-open="$mdMedia('gt-md')" md-component-id="left" class="md-whiteframe-z2 md-sidenav-left">
+    <md-button ng-repeat-start="item in menuItems" layout="row" layout-align="center center" flex class="capitalize" ng-click=""
+        ui-sref-active="md-warn" ui-sref="{{item.sref}}">
+        <md-tooltip md-direction="right">{{item.name}}</md-tooltip>
+            
+            <i class="material-icons md-36">{{item.icon}}</i>
+    </md-button>
+    <md-divider ng-repeat-end></md-divider>
+
+</md-sidenav>
+
+<div layout="column" flex>
+    <md-content flex class="md-padding page-content">
+        <div ui-view></div>
+    </md-content>
+</div>

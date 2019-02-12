@@ -65,3 +65,6 @@ package-lock.json
 
 # ignore keys folder
 keys/ 
+
+# ignore bower dependencies
+dev/client/assets/lib
