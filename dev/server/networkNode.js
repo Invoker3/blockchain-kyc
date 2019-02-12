@@ -1,6 +1,6 @@
-const express = require('express')
-const app = express()
+const express = require('express');
 const bodyParser = require('body-parser');
+const app = express();
 const Blockchain = require('./blockchain');
 const uuid = require('uuid/v1');
 const port = process.argv[2];
@@ -15,23 +15,22 @@ const mkdirpAsync = PromiseA.promisify(require('mkdirp'));
 
 const nodeAddress = uuid().split('-').join('');
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 const bitcoin = new Blockchain();
 
 var gov = {
     public_key: fs.readFileSync('gov/pubkey.pem'),
     private_key: fs.readFileSync('gov/privkey.pem')
 }
-var anuj = {
-    public_key: fs.readFileSync('anuj/pubkey.pem'),
-    private_key: fs.readFileSync('anuj/privkey.pem')
-}
-var zoomcar = {
-    public_key: fs.readFileSync('zoomcar/pubkey.pem'),
-    private_key: fs.readFileSync('zoomcar/privkey.pem')
+
+var service = {
+    public_key: fs.readFileSync('service/pubkey.pem'),
+    private_key: fs.readFileSync('service/privkey.pem')
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static('dev/client'));
 
 app.get('/blockchain', function (req, res) {
     res.send(bitcoin);
@@ -71,17 +70,24 @@ app.post('/generate-keypair', function (req, res) {
 })
 
 app.post('/input-and-encrypt', function (req, res) {
+   // console.log(req.body);
     const name = req.body.name;
     const age = req.body.age;
     const gender = req.body.gender;
     const license = req.body.license;
+    const keyName = req.body.keyName;
 
+    const userKeys = {
+        public_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.pubkey.pem'),
+        private_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.privkey.pem')
+    }
+console.log(req.body);
     var first_result = crypto.privateEncrypt({
         key: gov.private_key
     }, new Buffer(JSON.stringify(req.body)));
-
+//console.log(Buffer)
     var second_result = crypto.publicEncrypt({
-        key: anuj.public_key,
+        key: userKeys.public_key,
         padding: crypto.constants.RSA_NO_PADDING
     }, first_result);
 
@@ -100,15 +106,22 @@ app.post('/input-and-encrypt', function (req, res) {
 
 
 app.post('/encrypt-and-share', function (req, res) {
+    //console.log(req.body)
+    const keyName = req.body.keyName;
+
+    const userKeys = {
+        public_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.pubkey.pem'),
+        private_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.privkey.pem')
+    }
     var new_second_result = new Buffer(req.body.encryptedData, "hex");
 
     var second_plaintext = crypto.privateDecrypt({
-        key: anuj.private_key,
+        key: userKeys.private_key,
         padding: crypto.constants.RSA_NO_PADDING
     }, new_second_result);
 
     var second_result = crypto.publicEncrypt({
-        key: zoomcar.public_key,
+        key: service.public_key,
         padding: crypto.constants.RSA_NO_PADDING
     }, second_plaintext);
 
@@ -121,10 +134,10 @@ app.post('/decrypt-and-output',function(req, res) {
     var second_result = new Buffer(req.body.encryptedData, "hex");
 
     var second_plaintext = crypto.privateDecrypt({
-        key: zoomcar.private_key,
+        key: service.private_key,
         padding: crypto.constants.RSA_NO_PADDING
     }, second_result);
-    console.log(second_plaintext.toString("hex"));
+   // console.log(second_plaintext.toString("hex"));
 
     var first_plaintext = crypto.publicDecrypt({
         key: gov.public_key
@@ -184,7 +197,7 @@ app.get('/mine', function (req, res) {
     });
 
     Promise.all(requestPromises)
-        .then(data => {
+        /*.then(data => {
             const requestOptions = {
                 uri: bitcoin.currentNodeUrl + '/transaction/broadcast',
                 method: 'POST',
@@ -197,7 +210,7 @@ app.get('/mine', function (req, res) {
             };
 
             return rp(requestOptions);
-        })
+        })*/
         .then(data => {
             res.json({
                 note: 'New block mined successfully',
