@@ -170,25 +170,28 @@ app.get('/fetch-service-providers', function (req, res) {
 
 app.post('/encrypt-and-share', function (req, res) {
     //console.log(req.body)
-    const keyName = req.body.keyName;
-
-    const userKeys = {
-        public_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.pubkey.pem'),
-        private_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.privkey.pem')
-    }
-    var new_second_result = new Buffer(req.body.encryptedData, "hex");
+    //const keyName = req.body.keyName;
+    const userPrivKey = req.body.userPrivKey;
+    const servicePubKey = req.body.servicePubKey;
+    const inputEncryptedData = req.body.inputEncryptedData;
+    // const userKeys = {
+    //     public_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.pubkey.pem'),
+    //     private_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.privkey.pem')
+    // }
+    var new_second_result = new Buffer(inputEncryptedData, "hex");
 
     var second_plaintext = crypto.privateDecrypt({
-        key: userKeys.private_key,
+        key: userPrivKey,
         padding: crypto.constants.RSA_NO_PADDING
     }, new_second_result);
 
     var second_result = crypto.publicEncrypt({
-        key: service.public_key,
+        key: servicePubKey,
         padding: crypto.constants.RSA_NO_PADDING
     }, second_plaintext);
 
     var encryptedData = second_result.toString('hex');
+    //console.log(encryptedData);
     res.json({ encryptedData: encryptedData });
 
 })
