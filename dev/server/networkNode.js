@@ -49,14 +49,15 @@ app.post('/transaction', function (req, res) {
 
 app.post('/generate-keypair', function (req, res) {
     const keyName = req.body.keyName;
+    const keyType = req.body.keyType;
     function keypair(pathname) {
         var key = ursa.generatePrivateKey(1024, 65537);
         var privpem = key.toPrivatePem();
         var pubpem = key.toPublicPem();
-        var privkey = path.join('keys', pathname, pathname + '.privkey.pem');
-        var pubkey = path.join('keys', pathname, pathname + '.pubkey.pem');
+        var privkey = path.join('keys/' + keyType, pathname, pathname + '.privkey.pem');
+        var pubkey = path.join('keys/' + keyType, pathname, pathname + '.pubkey.pem');
 
-        return mkdirpAsync('keys/' + pathname).then(function () {
+        return mkdirpAsync('keys/' + keyType + '/' + pathname).then(function () {
             return PromiseA.all([
                 fsPromise.writeFileAsync(privkey, privpem, 'ascii')
                 , fsPromise.writeFileAsync(pubkey, pubpem, 'ascii')
@@ -82,7 +83,7 @@ app.post('/input-and-encrypt', function (req, res) {
     const keyName = req.body.keyName;
 
     const userKeys = {
-        public_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.pubkey.pem'),
+        public_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.pubkey.pem'),
         //private_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.privkey.pem')
     }
     console.log(req.body);
@@ -108,8 +109,9 @@ app.post('/input-and-encrypt', function (req, res) {
         })
 })
 
-app.post('/send-email', function (req, res) { 
+app.post('/send-email', function (req, res) {
     const keyName = req.body.keyName;
+    const keyType = req.body.keyType;
     const recipient = req.body.recipient;
     var smtpTransport = nodemailer.createTransport({
         service: "gmail",
@@ -124,40 +126,55 @@ app.post('/send-email', function (req, res) {
         subject: 'Public/Private keys',
         text: 'These are the keys generated. \nDO NOT SHARE YOUR PRIVATE KEY WITH ANYONE ',
         attachments: [{
-            path: './keys/' + keyName + '/' + keyName + '.pubkey.pem'
+            path: './keys/' + keyType + '/' + keyName + '/' + keyName + '.pubkey.pem'
         },
         {
-            path:  './keys/' + keyName + '/' + keyName + '.privkey.pem'
+            path: './keys/' + keyType + '/' + keyName + '/' + keyName + '.privkey.pem'
         }]
     }
     console.log(mailOptions);
     smtpTransport.sendMail(mailOptions, function (error, response) {
         if (error) {
             console.log(error);
-            res.json({note:'Operation failed'});
+            res.json({ note: 'Operation failed' });
         } else {
 
             //console.log("Message sent: " + response.message);
             //res.end("sent");
-            fs.unlinkSync('./keys/' + keyName + '/' + keyName + '.privkey.pem');
+            fs.unlinkSync('./keys/' + keyType + '/' + keyName + '/' + keyName + '.privkey.pem');
         }
-        res.json({note:'Email sent successfully'});
+        res.json({ note: 'Email sent successfully' });
     });
 })
 
+app.get('/fetch-service-providers', function (req, res) {
+    var services = []; //this is going to contain paths
 
-
-
-
-
+    fs.readdir('./keys/services/', function (err, filesPath) {
+        if (err) throw err;
+        services = filesPath.map(function (filePath) {
+            return filePath;
+        });
+        //console.log(services);
+        var keyList = [];
+        services.forEach(service => {
+            fs.readFile('./keys/services/' + service + '/' + service + '.pubkey.pem', 'utf8', function (err, data) {
+                if (err) throw err;
+                keyList.push({ name: service, pubkey: data });
+                if (service == services[services.length - 1])
+                    res.json({ keyList: keyList });
+            });
+        })
+    });
+})
 
 app.post('/encrypt-and-share', function (req, res) {
     //console.log(req.body)
     const keyName = req.body.keyName;
 
     const userKeys = {
-        public_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.pubkey.pem'),
-        private_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.privkey.pem')
+        public_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.pubkey.pem'),
+        private_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.privkey.pem')
     }
     var new_second_result = new Buffer(req.body.encryptedData, "hex");
 

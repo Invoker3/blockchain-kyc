@@ -2,10 +2,10 @@
     'use strict';
     angular
         .module('MyBlockchain')
-        .controller('userRegCtrl', userRegCtrl);
+        .controller('serviceRegCtrl', serviceRegCtrl);
 
-    function userRegCtrl($scope, $http, toastService) {
-        $scope.newUserRegister = function () {
+    function serviceRegCtrl($scope, $http, toastService) {
+        $scope.newServiceRegister = function () {
             $http({
                 method: 'GET',
                 url: '/blockchain',
@@ -25,27 +25,18 @@
                         $http({
                             method: 'POST',
                             url: '/generate-keypair',
-                            data: { keyName: $scope.keyName, keyType: 'users' }
+                            data: { keyName: $scope.keyName, keyType: 'services' }
                         })
                             .then(function (keypairRes) {
                                 if (keypairRes.data.note == 'Public/Private keypair generated for ' + $scope.keyName) {
                                     $http({
                                         method: 'POST',
                                         url: '/send-email',
-                                        data: { keyName: $scope.keyName, keyType: 'users', recipient: $scope.email }
+                                        data: { keyName: $scope.keyName, keyType: 'services', recipient: $scope.email }
                                     })
                                         .then(function (emailRes) {
                                             if (emailRes.data.note == 'Email sent successfully') {
-                                                $http({
-                                                    method: 'POST',
-                                                    url: '/input-and-encrypt',
-                                                    data: { name: $scope.name, age: $scope.age, gender: $scope.gender, license: $scope.license, keyName: $scope.keyName }
-                                                })
-                                                    .then(function (encryptRes) {
-                                                        if (encryptRes.data.encryptedData) {
-                                                            toastService.Notify("Data added securely on the Blockchain. Check your mail for further details!");
-                                                        }
-                                                    })
+                                                toastService.Notify('Service Provider register successfully!');
                                             }
                                         })
                                 }

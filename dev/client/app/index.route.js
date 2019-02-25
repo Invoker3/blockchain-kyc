@@ -36,6 +36,18 @@
           controller: 'userRegCtrl',
           controllerAs: 'userReg'
         })
+        .state('menu.service-registration', {
+          url: '/service-registration',
+          templateUrl: 'app/service_registration/service_registration.html',
+          controller: 'serviceRegCtrl',
+          controllerAs: 'serviceReg'
+        })
+        .state('menu.share-kyc', {
+          url: '/share-kyc',
+          templateUrl: 'app/share_kyc/share_kyc.html',
+          controller: 'shareKYCCtrl',
+          controllerAs: 'shareKYC'
+        })
     });
 
 })();
