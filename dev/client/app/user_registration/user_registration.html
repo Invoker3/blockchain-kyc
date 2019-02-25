@@ -7,34 +7,34 @@
         <div>
             <md-input-container class="md-block">
                 <label>Name</label>
-                <input name="name" ng-model="name">
+                <input name="name" ng-model="name" required>
             </md-input-container>
             <md-input-container class="md-block">
                 <label>Age</label>
-                <input name="age" ng-model="age" type="number">
+                <input name="age" ng-model="age" type="number" required>
             </md-input-container>
             <md-input-container class="md-block">
                 <label>Gender</label>
-                <input name="gender" ng-model="gender">
+                <input name="gender" ng-model="gender" required>
             </md-input-container>
             <md-input-container class="md-block">
                 <label>License</label>
-                <input name="license" ng-model="license">
+                <input name="license" ng-model="license" required>
             </md-input-container>
             <md-input-container class="md-block">
                 <label>Key Name</label>
-                <input name="keyName" ng-model="keyName">
+                <input name="keyName" ng-model="keyName" required>
             </md-input-container>
             <md-input-container class="md-block">
                 <label>Email</label>
-                <input name="email" ng-model="email">
+                <input name="email" ng-model="email" type="email" required>
             </md-input-container>
         </div>
         <md-toolbar class="footerToolbar" style="left:0; position: initial;">
             <div class="md-toolbar-tools StandardToolbar">
                 <h2 flex md-truncate></h2>
                 <div>
-                    <md-button type="submit" ng-click="newUserRegister()" class="md-raised">
+                    <md-button type="submit" ng-click="newUserRegister()" class="md-raised" ng-disabled="UserRegForm.$invalid">
                         REGISTER
                     </md-button>
                 </div>

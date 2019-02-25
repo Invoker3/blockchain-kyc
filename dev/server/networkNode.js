@@ -14,6 +14,7 @@ const ursa = require('ursa');
 const mkdirpAsync = PromiseA.promisify(require('mkdirp'));
 const nodemailer = require("nodemailer");
 const dotenv = require('dotenv').config();
+const request = require('request');
 
 const nodeAddress = uuid().split('-').join('');
 
@@ -98,7 +99,7 @@ app.post('/input-and-encrypt', function (req, res) {
     const requestOptions = {
         uri: bitcoin.currentNodeUrl + '/transaction/broadcast',
         method: 'POST',
-        body: { encryptedData: encryptedData },
+        body: { encryptedData: encryptedData, keyName: keyName },
         json: true
     };
     rp(requestOptions)
@@ -196,7 +197,7 @@ app.post('/decrypt-and-output', function (req, res) {
 
 
 app.post('/transaction/broadcast', function (req, res) {
-    const newTransaction = bitcoin.createNewTransaction(req.body.encryptedData);
+    const newTransaction = bitcoin.createNewTransaction(req.body.encryptedData, req.body.keyName);
     bitcoin.addTransactionToPendingTransactions(newTransaction);
 
     const requestPromises = [];
@@ -213,6 +214,7 @@ app.post('/transaction/broadcast', function (req, res) {
 
     Promise.all(requestPromises)
         .then(data => {
+            request(bitcoin.currentNodeUrl + '/mine');
             res.json({ note: 'Transaction created and broadcasted successfully.' })
         })
 })

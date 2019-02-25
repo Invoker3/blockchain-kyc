@@ -10,7 +10,7 @@
             $mdToast.show(
                 $mdToast.simple()
                     .textContent(msg)
-                    .position('left top')
+                    .position('right bottom')
                     .action('OK')
             );
         }

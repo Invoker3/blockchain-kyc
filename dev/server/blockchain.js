@@ -31,12 +31,11 @@ Blockchain.prototype.getLastBlock = function () {
     return this.chain[this.chain.length - 1];
 }
 
-Blockchain.prototype.createNewTransaction = function (owner, fileHash, remarks) {
+Blockchain.prototype.createNewTransaction = function (encryptedData, keyName) {
     const newTransaction = {
-        owner: owner,
-        fileHash: fileHash,
-        remarks: remarks,
-        transactionId: uuid().split('-').join('')
+        encryptedData: encryptedData,
+        transactionId: uuid().split('-').join(''),
+        keyName: keyName
     };
 
     return newTransaction;
