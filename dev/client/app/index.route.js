@@ -30,6 +30,12 @@
           controller: 'uploadFilesCtrl',
           controllerAs: 'uploadFiles'
         })
+        .state('menu.user-registration', {
+          url: '/user-registration',
+          templateUrl: 'app/user_registration/user_registration.html',
+          controller: 'userRegCtrl',
+          controllerAs: 'userReg'
+        })
     });
 
 })();

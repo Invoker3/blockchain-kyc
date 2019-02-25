@@ -1,0 +1,44 @@
+<md-card layout-fill>
+    <form name="UserRegForm">
+        <md-toolbar class="md-table-toolbar">
+            <h2>User Registration</h2>
+        </md-toolbar>
+
+        <div>
+            <md-input-container class="md-block">
+                <label>Name</label>
+                <input name="name" ng-model="name">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Age</label>
+                <input name="age" ng-model="age" type="number">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Gender</label>
+                <input name="gender" ng-model="gender">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>License</label>
+                <input name="license" ng-model="license">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Key Name</label>
+                <input name="keyName" ng-model="keyName">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Email</label>
+                <input name="email" ng-model="email">
+            </md-input-container>
+        </div>
+        <md-toolbar class="footerToolbar" style="left:0; position: initial;">
+            <div class="md-toolbar-tools StandardToolbar">
+                <h2 flex md-truncate></h2>
+                <div>
+                    <md-button type="submit" ng-click="newUserRegister()" class="md-raised">
+                        REGISTER
+                    </md-button>
+                </div>
+            </div>
+        </md-toolbar>
+    </form>
+</md-card>

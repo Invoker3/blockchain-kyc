@@ -24,6 +24,11 @@
             icon: 'backup',
             sref: '.upload-files'
         },
+        {
+          name: 'User Registration',
+          icon: 'people',
+          sref: '.user-registration'
+      },
       ];
   
       return {

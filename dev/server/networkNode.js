@@ -33,6 +33,7 @@ var service = {
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('dev/client'));
 
 app.get('/blockchain', function (req, res) {
     res.send(bitcoin);
@@ -81,7 +82,7 @@ app.post('/input-and-encrypt', function (req, res) {
 
     const userKeys = {
         public_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.pubkey.pem'),
-        private_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.privkey.pem')
+        //private_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.privkey.pem')
     }
     console.log(req.body);
     var first_result = crypto.privateEncrypt({
@@ -107,7 +108,7 @@ app.post('/input-and-encrypt', function (req, res) {
 })
 
 app.post('/send-email', function (req, res) { 
-    const fileName = req.body.fileName;
+    const keyName = req.body.keyName;
     const recipient = req.body.recipient;
     var smtpTransport = nodemailer.createTransport({
         service: "gmail",
@@ -122,10 +123,10 @@ app.post('/send-email', function (req, res) {
         subject: 'Public/Private keys',
         text: 'These are the keys generated. \nDO NOT SHARE YOUR PRIVATE KEY WITH ANYONE ',
         attachments: [{
-            path: './keys/' + fileName + '/' + fileName + '.pubkey.pem'
+            path: './keys/' + keyName + '/' + keyName + '.pubkey.pem'
         },
         {
-            path:  './keys/' + fileName + '/' + fileName + '.privkey.pem'
+            path:  './keys/' + keyName + '/' + keyName + '.privkey.pem'
         }]
     }
     console.log(mailOptions);
@@ -137,7 +138,7 @@ app.post('/send-email', function (req, res) {
 
             //console.log("Message sent: " + response.message);
             //res.end("sent");
-            fs.unlinkSync('./keys/' + fileName + '/' + fileName + '.privkey.pem');
+            fs.unlinkSync('./keys/' + keyName + '/' + keyName + '.privkey.pem');
         }
         res.json({note:'Email sent successfully'});
     });
