@@ -12,6 +12,8 @@ const fsPromise = PromiseA.promisifyAll(require('fs'));
 const path = require('path');
 const ursa = require('ursa');
 const mkdirpAsync = PromiseA.promisify(require('mkdirp'));
+const nodemailer = require("nodemailer");
+const dotenv = require('dotenv').config();
 
 const nodeAddress = uuid().split('-').join('');
 
@@ -51,26 +53,26 @@ app.post('/generate-keypair', function (req, res) {
         var pubpem = key.toPublicPem();
         var privkey = path.join('keys', pathname, pathname + '.privkey.pem');
         var pubkey = path.join('keys', pathname, pathname + '.pubkey.pem');
-      
+
         return mkdirpAsync('keys/' + pathname).then(function () {
-          return PromiseA.all([
-            fsPromise.writeFileAsync(privkey, privpem, 'ascii')
-          , fsPromise.writeFileAsync(pubkey, pubpem, 'ascii')
-          ]);
+            return PromiseA.all([
+                fsPromise.writeFileAsync(privkey, privpem, 'ascii')
+                , fsPromise.writeFileAsync(pubkey, pubpem, 'ascii')
+            ]);
         }).then(function () {
-          return key;
+            return key;
         });
-      }
-      
-      PromiseA.all([
+    }
+
+    PromiseA.all([
         keypair(keyName)
-      ]).then(function (keys) {
-        res.json({note: 'Public/Private keypair generated for ' + keyName});
-      });
+    ]).then(function (keys) {
+        res.json({ note: 'Public/Private keypair generated for ' + keyName });
+    });
 })
 
 app.post('/input-and-encrypt', function (req, res) {
-   // console.log(req.body);
+    // console.log(req.body);
     const name = req.body.name;
     const age = req.body.age;
     const gender = req.body.gender;
@@ -81,11 +83,11 @@ app.post('/input-and-encrypt', function (req, res) {
         public_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.pubkey.pem'),
         private_key: fs.readFileSync('keys/' + keyName + '/' + keyName + '.privkey.pem')
     }
-console.log(req.body);
+    console.log(req.body);
     var first_result = crypto.privateEncrypt({
         key: gov.private_key
     }, new Buffer(JSON.stringify(req.body)));
-//console.log(Buffer)
+    //console.log(Buffer)
     var second_result = crypto.publicEncrypt({
         key: userKeys.public_key,
         padding: crypto.constants.RSA_NO_PADDING
@@ -103,6 +105,48 @@ console.log(req.body);
             res.json({ encryptedData: encryptedData })
         })
 })
+
+app.post('/send-email', function (req, res) { 
+    const fileName = req.body.fileName;
+    const recipient = req.body.recipient;
+    var smtpTransport = nodemailer.createTransport({
+        service: "gmail",
+        host: "smtp.gmail.com",
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASS
+        }
+    })
+    var mailOptions = {
+        to: recipient,
+        subject: 'Public/Private keys',
+        text: 'These are the keys generated. \nDO NOT SHARE YOUR PRIVATE KEY WITH ANYONE ',
+        attachments: [{
+            path: './keys/' + fileName + '/' + fileName + '.pubkey.pem'
+        },
+        {
+            path:  './keys/' + fileName + '/' + fileName + '.privkey.pem'
+        }]
+    }
+    console.log(mailOptions);
+    smtpTransport.sendMail(mailOptions, function (error, response) {
+        if (error) {
+            console.log(error);
+            res.json({note:'Operation failed'});
+        } else {
+
+            //console.log("Message sent: " + response.message);
+            //res.end("sent");
+            fs.unlinkSync('./keys/' + fileName + '/' + fileName + '.privkey.pem');
+        }
+        res.json({note:'Email sent successfully'});
+    });
+})
+
+
+
+
+
 
 
 app.post('/encrypt-and-share', function (req, res) {
@@ -126,25 +170,25 @@ app.post('/encrypt-and-share', function (req, res) {
     }, second_plaintext);
 
     var encryptedData = second_result.toString('hex');
-    res.json({encryptedData: encryptedData});
-   
+    res.json({ encryptedData: encryptedData });
+
 })
 
-app.post('/decrypt-and-output',function(req, res) {
+app.post('/decrypt-and-output', function (req, res) {
     var second_result = new Buffer(req.body.encryptedData, "hex");
 
     var second_plaintext = crypto.privateDecrypt({
         key: service.private_key,
         padding: crypto.constants.RSA_NO_PADDING
     }, second_result);
-   // console.log(second_plaintext.toString("hex"));
+    // console.log(second_plaintext.toString("hex"));
 
     var first_plaintext = crypto.publicDecrypt({
         key: gov.public_key
     }, second_plaintext);
 
     var decryptedData = JSON.parse(first_plaintext.toString('utf8'));
-    res.json({decryptedData: decryptedData});
+    res.json({ decryptedData: decryptedData });
 
 
 })
@@ -365,6 +409,11 @@ app.get('/address/:address', function (req, res) {
 
 app.get('/block-explorer', function (req, res) {
     res.sendFile('./block-explorer/index.html', { root: __dirname });
+})
+
+app.get('/', function (req, res) {
+    //res.sendFile('../client/block-explorer/index.html', { root: __dirname });
+    res.sendFile(path.resolve('dev/client/index.html'));
 })
 
 
