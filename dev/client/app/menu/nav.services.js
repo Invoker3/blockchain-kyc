@@ -38,6 +38,11 @@
         name: 'Share KYC',
         icon: 'share',
         sref: '.share-kyc'
+      },
+      {
+        name: 'Pending Requests',
+        icon: 'history',
+        sref: '.pending-requests'
       }
     ];
 

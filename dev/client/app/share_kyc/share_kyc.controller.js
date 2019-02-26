@@ -17,12 +17,23 @@
         $scope.shareKYCDetails = function() {
             $http({
                 method: 'POST',
-                url: '/encrypt-and-share',
-                data: { userPrivKey: $scope.userPrivKey, servicePubKey: $scope.servicePubKey , inputEncryptedData: $scope.inputEncryptedData }
+                url: '/fetch-transactionId',
+                data: { inputEncryptedData: $scope.inputEncryptedData }
             })
-            .then(function(shareRes) {
-                console.log(shareRes.data);
+            .then(function(fetchRes) {
+                console.log(fetchRes.data);
+                $scope.transactionId = fetchRes.data.transactionId;
+                $scope.timestamp = fetchRes.data.timestamp;
+                $http({
+                    method: 'POST',
+                    url: '/encrypt-and-share',
+                    data: { userPrivKey: $scope.userPrivKey, servicePubKey: $scope.servicePubKey.pubkey , inputEncryptedData: $scope.inputEncryptedData, serviceName: $scope.servicePubKey.name, transactionId: $scope.transactionId, timestamp: $scope.timestamp  }
+                })
+                .then(function(shareRes) {
+                    console.log(shareRes.data);
+                })
             })
+            
         }
     }
 

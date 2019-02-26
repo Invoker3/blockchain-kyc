@@ -48,6 +48,12 @@
           controller: 'shareKYCCtrl',
           controllerAs: 'shareKYC'
         })
+        .state('menu.pending-requests', {
+          url: '/pending-requests',
+          templateUrl: 'app/pending_requests/pending_requests.html',
+          controller: 'pendingReqCtrl',
+          controllerAs: 'pendingReq'
+        })
     });
 
 })();

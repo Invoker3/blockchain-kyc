@@ -8,7 +8,7 @@
             <md-input-container flex class="md-block">
                 <label>Select Service Provider</label>
                 <md-select name="sample" ng-model="servicePubKey" required>
-                    <md-option ng-value="row.pubkey" ng-repeat="row in services track by $index">{{row.name}}</md-option>
+                    <md-option ng-value="row" ng-repeat="row in services track by $index">{{row.name}}</md-option>
                 </md-select>
             </md-input-container>
             <textarea name="userPrivKey" ng-model="userPrivKey" rows="7" cols="120" placeholder="Input your private key.." required></textarea> <br><br>

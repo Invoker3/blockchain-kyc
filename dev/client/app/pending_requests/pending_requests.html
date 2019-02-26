@@ -1,0 +1,44 @@
+<md-card layout-fill>
+    <form name="ServiceRegForm">
+        <md-toolbar class="md-table-toolbar">
+            <h2>Pending Requests</h2>
+        </md-toolbar>
+        <div>
+            <md-input-container flex class="md-block">
+                <label>Select Service Provider</label>
+                <md-select name="serviceName" ng-model="serviceName" ng-change="serviceSelected()" required>
+                    <md-option ng-value="row.name" ng-repeat="row in services track by $index">{{row.name}}</md-option>
+                </md-select>
+            </md-input-container>
+
+            <md-table-container>
+                <table md-table class="table table-hover">
+                    <thead md-head>
+                        <tr md-row>
+                            <th md-column><span>Transaction ID</span></th>
+                            <th md-column><span>Timestamp</span></th>
+                            <th md-column><span>Encrypted Data</span></th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="request in pendingRequests track by $index">
+                            <td md-cell>{{ request.transactionId }} </td>    
+                            <td md-cell>{{ request.timestamp }} </td>
+                            <td md-cell>{{ request.encryptedData }} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+        </div>
+        <md-toolbar class="footerToolbar" style="left:0; position: initial;">
+            <div class="md-toolbar-tools StandardToolbar">
+                <h2 flex md-truncate></h2>
+                <div>
+                    <md-button type="submit" ng-click="newServiceRegister()" class="md-raised" ng-disabled="ServiceRegForm.$invalid">
+                        REGISTER
+                    </md-button>
+                </div>
+            </div>
+        </md-toolbar>
+    </form>
+</md-card>
