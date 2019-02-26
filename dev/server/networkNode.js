@@ -168,12 +168,44 @@ app.get('/fetch-service-providers', function (req, res) {
     });
 })
 
+app.get('/fetch-pending-requests', function (req, res) {
+    request(bitcoin.currentNodeUrl + '/blockchain', { json: true }, (err, blockRes, body) => {
+        if (err) { return console.log(err); }
+        //console.log(res.body);
+        var pendingRequestsList = new Object();
+        blockRes.body.pendingRequests.forEach(singleRequest => {
+            if(!pendingRequestsList[singleRequest.serviceName])
+                pendingRequestsList[singleRequest.serviceName] = [];
+            pendingRequestsList[singleRequest.serviceName].push({ encryptedData: singleRequest.encryptedData, transactionId: singleRequest.transactionId, timestamp: singleRequest.timestamp});
+        })
+        res.json({pendingRequestsList: pendingRequestsList});
+    });
+
+})
+
+app.post('/fetch-transactionId', function (req, res) {
+    const inputEncryptedData = req.body.inputEncryptedData;
+    request(bitcoin.currentNodeUrl + '/blockchain', { json: true }, (err, blockRes, body) => {
+        if (err) { return console.log(err); }
+        blockRes.body.chain.forEach(block => {
+            block.transactions.forEach(transaction=> {
+                if(inputEncryptedData == transaction.encryptedData)
+                    res.json({transactionId: transaction.transactionId, timestamp: transaction.timestamp})
+            })
+        })
+        //res.json({transactionId: 0});
+    });
+
+})
 app.post('/encrypt-and-share', function (req, res) {
     //console.log(req.body)
     //const keyName = req.body.keyName;
+    const serviceName = req.body.serviceName;
     const userPrivKey = req.body.userPrivKey;
     const servicePubKey = req.body.servicePubKey;
     const inputEncryptedData = req.body.inputEncryptedData;
+    const transactionId = req.body.transactionId;
+    const timestamp = req.body.timestamp;
     // const userKeys = {
     //     public_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.pubkey.pem'),
     //     private_key: fs.readFileSync('keys/users/' + keyName + '/' + keyName + '.privkey.pem')
@@ -192,6 +224,13 @@ app.post('/encrypt-and-share', function (req, res) {
 
     var encryptedData = second_result.toString('hex');
     //console.log(encryptedData);
+    const newRequest = {
+        serviceName: serviceName,
+        encryptedData: encryptedData,
+        transactionId: transactionId,
+        timestamp: timestamp
+    };
+    const blockIndex = bitcoin.addTransactionToPendingRequests(newRequest);
     res.json({ encryptedData: encryptedData });
 
 })

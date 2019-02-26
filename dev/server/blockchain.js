@@ -6,6 +6,7 @@ function Blockchain() {
     this.chain = [];
     this.pendingTransactions = [];
     this.currentNodeUrl = currentNodeUrl;
+    this.pendingRequests = [];
     this.networkNodes = [];
     this.createNewBlock(100, '0', '0'); //genesis block 
 }
@@ -35,6 +36,7 @@ Blockchain.prototype.createNewTransaction = function (encryptedData, keyName) {
     const newTransaction = {
         encryptedData: encryptedData,
         transactionId: uuid().split('-').join(''),
+        timestamp: Date.now(),
         keyName: keyName
     };
 
@@ -46,6 +48,10 @@ Blockchain.prototype.addTransactionToPendingTransactions = function (transaction
     return this.getLastBlock()['index'] + 1;
 };
 
+Blockchain.prototype.addTransactionToPendingRequests = function (requestObj){
+    this.pendingRequests.push(requestObj);
+    return this.getLastBlock()['index'] + 1;
+};
 
 Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, nonce) {
     const dataAsString = previousBlockHash + nonce.toString() + JSON.stringify(currentBlockData);
