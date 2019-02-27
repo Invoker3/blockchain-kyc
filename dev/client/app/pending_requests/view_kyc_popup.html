@@ -1,0 +1,62 @@
+<md-dialog>
+    <form name="ViewInfoForm">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Transaction ID: {{mdDialogData.transactionId}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Timestamp: {{mdDialogData.timestamp | date:'medium'}}
+                </h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon>
+                        <md-tooltip md-direction="right">Close</md-tooltip>close
+                    </md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <textarea name="servicePrivKey" ng-model="servicePrivKey" rows="7" cols="120" placeholder="Input your private key.." required></textarea>        <br><br>
+
+        <md-dialog-content>
+            <md-table-container ng-if="viewFlag">
+                <table md-table ng-if="!showUploadButton">
+                    <thead md-head>
+                        <tr md-row>
+                            <th md-column><span>KYC Details</span></th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row>
+                            <td md-cell><b>Name</b></td>
+                            <td md-cell>{{ decryptedData.name }} </td>
+                        </tr>
+                        <tr md-row>
+                            <td md-cell><b>Age</b></td>
+                            <td md-cell>{{ decryptedData.age }} </td>
+                        </tr>
+                        <tr md-row>
+                            <td md-cell><b>Gender</b></td>
+                            <td md-cell>{{ decryptedData.gender }}</td>
+                        </tr>
+                        <tr md-row>
+                            <td md-cell><b>License</b></td>
+                            <td md-cell>{{ decryptedData.license }}</td>
+                        </tr>
+                        <tr md-row>
+                            <td md-cell><b>Key Name</b></td>
+                            <td md-cell>{{ decryptedData.keyName }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+            <md-toolbar class="footerToolbar" style="left:0; position: initial;">
+                <div class="md-toolbar-tools StandardToolbar">
+                    <h2 flex md-truncate></h2>
+                    <div>
+                        <md-button type="submit" ng-click="viewInfo()" class="md-raised" ng-disabled="ViewInfoForm.$invalid">
+                            VIEW INFORMATION
+                        </md-button>
+                    </div>
+                </div>
+            </md-toolbar>
+        </md-dialog-content>
+    </form>
+</md-dialog>

@@ -18,13 +18,21 @@
                             <th md-column><span>Transaction ID</span></th>
                             <th md-column><span>Timestamp</span></th>
                             <th md-column><span>Encrypted Data</span></th>
+                            <th md-column><span></span></th>
                         </tr>
                     </thead>
                     <tbody md-body>
                         <tr md-row ng-repeat="request in pendingRequests track by $index">
                             <td md-cell>{{ request.transactionId }} </td>    
-                            <td md-cell>{{ request.timestamp }} </td>
-                            <td md-cell>{{ request.encryptedData }} </td>
+                            <td md-cell>{{ request.timestamp | date:'medium' }} </td>
+                            <td md-cell>{{ request.encryptedData | limitTo : 50 }}....</td>
+                            <td md-cell>
+                                <md-button class="md-icon-button console-buttons md-small" ng-click="viewKYC(request.transactionId, request.timestamp, request.encryptedData)">
+                                    <md-icon>
+                                        <md-tooltip md-direction="top">View KYC Details</md-tooltip>vpn_key
+                                    </md-icon>
+                                </md-button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

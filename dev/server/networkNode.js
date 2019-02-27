@@ -237,10 +237,12 @@ app.post('/encrypt-and-share', function (req, res) {
 })
 
 app.post('/decrypt-and-output', function (req, res) {
-    var second_result = new Buffer(req.body.encryptedData, "hex");
+    const encryptedData = req.body.encryptedData;
+    const servicePrivKey = req.body.servicePrivKey;
+    var second_result = new Buffer(encryptedData, "hex");
 
     var second_plaintext = crypto.privateDecrypt({
-        key: service.private_key,
+        key: servicePrivKey,
         padding: crypto.constants.RSA_NO_PADDING
     }, second_result);
     // console.log(second_plaintext.toString("hex"));

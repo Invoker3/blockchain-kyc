@@ -4,7 +4,7 @@
         .module('MyBlockchain')
         .controller('pendingReqCtrl', pendingReqCtrl);
 
-    function pendingReqCtrl($scope, $http, toastService) {
+    function pendingReqCtrl($scope, $http, toastService, $mdDialog) {
         $http({
             method: 'GET',
             url: '/fetch-pending-requests'
@@ -28,6 +28,17 @@
             $scope.pendingRequests = $scope.pendingRequestsList[$scope.serviceName];
             console.log($scope.pendingRequests);
         }
+
+        $scope.viewKYC = function (transactionId, timestamp, encryptedData) {
+            var data = { transactionId: transactionId, timestamp: timestamp, encryptedData: encryptedData};
+            $mdDialog.show({
+              controller: 'viewKYCCtrl',
+              templateUrl: 'app/pending_requests/view_kyc_popup.html',
+              locals: { dataToPass: data },
+              parent: angular.element(document.body),
+              clickOutsideToClose: true,
+            })
+          };
     }
 
 })();
