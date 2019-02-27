@@ -23,19 +23,17 @@
             <thead md-head>
                 <tr md-row>
                     <th md-column>Transaction ID</th>
-                    <th md-column>File Timestamp</th>
-                    <th md-column>File Hash</th>
-                    <th md-column>File Name</th>
-                    <th md-column>File Size</th>
+                    <th md-column>Timestamp</th>
+                    <th md-column>Encrypted Data</th>
+                    <th md-column>Key Name</th>
                 </tr>
             </thead>
             <tbody md-body>
                 <tr md-row ng-repeat="transaction in mdDialogData.blockTransactions">
                     <td md-cell>{{ transaction.transactionId }}</td>
                     <td md-cell>{{ transaction.timestamp | date:'medium'}}</td>
-                    <td md-cell>{{ transaction.fileHash }}</td>
-                    <td md-cell>{{ transaction.fileName }} </td>
-                    <td md-cell>{{ transaction.fileSize }}</td>
+                    <td md-cell>{{ transaction.encryptedData }}</td>
+                    <td md-cell>{{ transaction.keyName }} </td>
                 </tr>
             </tbody>
         </table>

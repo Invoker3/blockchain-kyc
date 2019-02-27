@@ -156,15 +156,16 @@ app.get('/fetch-service-providers', function (req, res) {
             return filePath;
         });
         //console.log(services);
+        
         var keyList = [];
         services.forEach(service => {
-            fs.readFile('./keys/services/' + service + '/' + service + '.pubkey.pem', 'utf8', function (err, data) {
-                if (err) throw err;
-                keyList.push({ name: service, pubkey: data });
-                if (service == services[services.length - 1])
-                    res.json({ keyList: keyList });
-            });
+           var data = fs.readFileSync('./keys/services/' + service + '/' + service + '.pubkey.pem', 'utf8');
+           console.log(data)
+           keyList.push({ name: service, pubkey: data });
+           if (service == services[services.length - 1])
+                    res.json({ keyList: keyList })
         })
+       // res.json({ keyList: keyList });
     });
 })
 

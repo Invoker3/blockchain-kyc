@@ -17,8 +17,9 @@
                     <th md-column><span>Transaction ID</span></th>
                     <th md-column><span></span></th>
                     <th md-column><span>Timestamp</span></th>
-                    <!-- <th md-column><span>File Hash</span></th> -->
-                    <th md-column><span>File Name</span></th>
+                    <th md-column><span>Encrypted Data</span></th>
+                    <th md-column><span></span></th>
+                    <th md-column><span>Key Name</span></th>
                     <!-- <th md-column><span>File Size (in bytes)</span></th> -->
                     <th md-column><span></span></th>
                     <th md-column><span></span></th>
@@ -35,10 +36,17 @@
                         </md-button>
                     </td>
                     <td md-cell>{{ transaction.timestamp | date:'medium' }}</td>
-                    <!-- <td md-cell>{{ transaction.fileHash }}</td> -->
-                    <td md-cell>{{ transaction.fileName }}</td>
-                    <!-- <td md-cell>{{ transaction.fileSize }}</td> -->
+                    <td md-cell>{{ transaction.encryptedData | limitTo : 50 }}....</td> 
                     <td md-cell>
+                        <md-button class="md-icon-button console-buttons md-small" ngclipboard data-clipboard-text="{{transaction.encryptedData}}">
+                            <md-icon>
+                                <md-tooltip md-direction="top">Copy to Clipboard</md-tooltip>file_copy
+                            </md-icon>
+                        </md-button>
+                    </td>
+                    <td md-cell>{{ transaction.keyName }}</td>
+                    <!-- <td md-cell>{{ transaction.fileSize }}</td> -->
+                    <!-- <td md-cell>
                         <md-button class="md-icon-button console-buttons md-small" ng-click="transactionExplorer.verifyFile(transaction)">
                             <md-icon>
                                 <md-tooltip md-direction="top">Verify File</md-tooltip>vpn_key
@@ -51,7 +59,7 @@
                                 <md-tooltip md-direction="top">Download File</md-tooltip>cloud_download
                             </md-icon>
                         </md-button>
-                    </td>
+                    </td> -->
                 </tr>
             </tbody>
         </table>

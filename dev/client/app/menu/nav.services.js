@@ -19,11 +19,11 @@
         icon: 'security',
         sref: '.transaction-explorer'
       },
-      {
-        name: 'Upload Files',
-        icon: 'backup',
-        sref: '.upload-files'
-      },
+      // {
+      //   name: 'Upload Files',
+      //   icon: 'backup',
+      //   sref: '.upload-files'
+      // },
       {
         name: 'User Registration',
         icon: 'people',

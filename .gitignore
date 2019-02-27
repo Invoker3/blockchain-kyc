@@ -69,3 +69,5 @@ keys/
 # ignore bower dependencies
 dev/client/assets/lib
 
+#ignore vscode
+.vscode

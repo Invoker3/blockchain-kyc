@@ -24,12 +24,12 @@
           controller: 'blockchainExplorerCtrl',
           controllerAs: 'blockchainExplorer'
         })
-        .state('menu.upload-files', {
-          url: '/upload-files',
-          templateUrl: 'app/upload_files/upload_files.html',
-          controller: 'uploadFilesCtrl',
-          controllerAs: 'uploadFiles'
-        })
+        // .state('menu.upload-files', {
+        //   url: '/upload-files',
+        //   templateUrl: 'app/upload_files/upload_files.html',
+        //   controller: 'uploadFilesCtrl',
+        //   controllerAs: 'uploadFiles'
+        // })
         .state('menu.user-registration', {
           url: '/user-registration',
           templateUrl: 'app/user_registration/user_registration.html',
